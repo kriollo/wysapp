@@ -1,0 +1,62 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content">
+        <div class="container-fluid">
+            <input type="file" name="foto" id="foto" class="SubirFoto" accept="image/*" capture="camera" onchange="updateFotoCamara();"/>
+
+            <div id="dfoto">
+                
+            </div>
+        </div>
+    <!-- /.container-fluid -->
+    </div>
+{% endblock %}
+{% block appScript %}
+    <script>
+        function updateFotoCamara(){
+            var FormD = new FormData();
+            
+            FormD.append("foto", document.getElementById('foto').files[0]);
+            $("#dfoto").html("");
+            $.ajax({
+                type: "POST",
+                url : 'api/updateFotoCamara',
+                contentType:false,
+                processData:false,
+                data : FormD,
+                success : function(json) {
+                    if (json.success == 1){
+                        $(document).Toasts('create', {
+                            class: 'bg-success', 
+                            title: 'Success',
+                            subtitle: '',
+                            body: json.message,
+                            autohide: true,
+                            delay: 2000
+                        })
+                        $("#dfoto").html(json.html);
+                    }else{
+                        $(document).Toasts('create', {
+                            class: 'bg-warning', 
+                            title: 'Alerta',
+                            subtitle: '',
+                            body: json.message,
+                            autohide: true,
+                            delay: 3000
+                        })
+                    }
+                },
+                error : function(xhr, status) {
+                    $(document).Toasts('create', {
+                        class: 'bg-danger', 
+                        title: 'Warning',
+                        subtitle: '',
+                        body: xhr.responseText,
+                        autohide: true,
+                        delay: 5000
+                    })
+                }
+            });
+        }
+    </script>
+{% endblock %}
